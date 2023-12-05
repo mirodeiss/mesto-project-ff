@@ -2,6 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: {
@@ -29,16 +30,38 @@ module.exports = {
         test: /\.(png|svg|jpg|gif|woff(2)?|eot|ttf|otf)$/,
         type: 'asset/resource',
       },
+      // {
+      //   test: /\.css$/,
+      //   use: ['style-loader',MiniCssExtractPlugin.loader, {
+      //       loader: 'css-loader',
+      //       options: {
+      //         importLoaders: 1
+      //       }
+      //     },
+      //     'postcss-loader'
+      //   ]
+      // },
       {
-        test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1
-            }
+        test: /\.css$/i,
+        use: [
+          "style-loader",
+          "css-loader",
+          {
+            loader: "postcss-loader",
+            options: { 
+              postcssOptions: {
+                plugins: [
+                  [
+                    "postcss-preset-env",
+                    {
+                      importLoaders: 1
+                    },
+                  ],
+                ],
+              },
+            },
           },
-          'postcss-loader'
-        ]
+        ],
       },
     ]
   },
@@ -48,6 +71,11 @@ module.exports = {
     }),
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin(),
-
+    new CopyPlugin({
+      patterns: [
+        { from: path.resolve(__dirname, 'src/images'),
+         to: path.resolve(__dirname, 'dist/images') },
+      ],
+    }),
   ]
 }
