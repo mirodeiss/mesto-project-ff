@@ -1,6 +1,5 @@
-
-import '../pages/index.css';
-
+import './index.css';
+import { initialCards } from './scripts/cards';
 const cardsContainer = document.querySelector('.places__list');
 
 // Функция создания карточки
@@ -65,7 +64,7 @@ closePopupButton.addEventListener('click', closePopup);
 const editPopupButton = document.querySelector('.profile__edit-button')
 const newItemPopupButton = document.querySelector('.profile__add-button')
 const imageItem = document.querySelector('.card__image')
-
+const colseIcon = document.querySelector('.popup__close')
 
 // попап редактирования
 editPopupButton.addEventListener('click', function () {
@@ -84,6 +83,9 @@ imageItem.addEventListener('click',function () {
     openModal(imageItemPopup)
 }) 
 
+colseIcon.addEventListener('click', (event)=>{
+    console.log(event.target.classList);
+})
 
 
 // функция like 
