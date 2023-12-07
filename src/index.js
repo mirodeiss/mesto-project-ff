@@ -1,105 +1,65 @@
 import './index.css';
-import { initialCards } from './scripts/cards';
+
+import { initialCards } from './components/cards';
+import { createCard } from './components/card';
+import { handleNewCardSubmit } from './components/modal';
+import { deleteCard } from './components/card';
+import { openModal } from './components/modal';
+import { closePopup } from './components/modal';
+import { handleEscPress } from './components/modal';
+import { openImageCard } from './components/modal';
+import { likeCard } from './components/card';
+
+// @DOM узлы
+
 const cardsContainer = document.querySelector('.places__list');
+const editPopupButton = document.querySelector('.profile__edit-button');
+const newItemPopupButton = document.querySelector('.profile__add-button');
+const nameInput = document.querySelector('.popup__input_type_name');
+const jobInput = document.querySelector('.popup__input_type_description');
+const popupElement = document.querySelectorAll('.popup')
+const popupRemoveButton = document.querySelectorAll('.popup__close')
+// const formElement = document.querySelector('.popup__form');
+const nameField = document.querySelector('.profile__title');
+const jobField = document.querySelector('.profile__description');
+const newItemPopup = document.querySelector('.popup_type_new-card');
+const newCardForm = newItemPopup.querySelector('.popup__form');
 
-// Функция создания карточки
-function createCard(cardValue, deleteCard) {
-    // Темплейт карточки
-    const cardTemplate = document.querySelector('#card-template');
-
-    // Клонируем содержимое этого темплейта
-    const templateContent = cardTemplate.content.cloneNode(true).querySelector('.places__item');
-
-    // Содержимое темплейта
-    templateContent.querySelector('.card__image').src = cardValue.link;
-    templateContent.querySelector('.card__image').alt = cardValue.name;
-    templateContent.querySelector('.card__title').textContent = cardValue.name;
-
-    //  слушатель на кнопку удаления
-    const deleteButton = templateContent.querySelector('.card__delete-button');
-    deleteButton.addEventListener('click', () => {
-        deleteCard(templateContent);
-    })
-    
-    return templateContent;
-
-    
-}
-
-
-// @todo: Функция удаления карточки
-function deleteCard(cardElement) {
-    cardElement.remove();
-}
-
-// @todo: Вывести карточки на страницу
-function renderCard(cardElement) {
-    cardsContainer.prepend(cardElement);
-}
-
-// Вывести первоначальные карточки на страницу
-initialCards.forEach((item) => {
-    const cardElement = createCard(item, deleteCard);
-    renderCard(cardElement);
-});
-
-
-
-// task 2 
-
-// функция открытие попапа 
-function openModal(popupElement) {
-    popupElement.classList.add('popup_is-opened');
-}
-
-function closePopup(popupElement) {
-    popupElement.classList.remove('popup_is-opened');
-}
-
-const closePopupButton = document.querySelector('.popup__close');
-
-closePopupButton.addEventListener('click', closePopup);
-
-// событие открытия попапа 
-const editPopupButton = document.querySelector('.profile__edit-button')
-const newItemPopupButton = document.querySelector('.profile__add-button')
-const imageItem = document.querySelector('.card__image')
-const colseIcon = document.querySelector('.popup__close')
+newCardForm.addEventListener('submit', handleNewCardSubmit);
 
 // попап редактирования
 editPopupButton.addEventListener('click', function () {
     const editPopup = document.querySelector('.popup_type_edit')
     openModal(editPopup);
+    document.addEventListener('keydown', handleEscPress);
+    // значения инпутов при открытие попапа
+
+    nameInput.value = nameField.textContent;
+    jobInput.value =  jobField.textContent;
 });
 //   попап добавления
 newItemPopupButton.addEventListener('click', function () {
-    const newItemPopup = document.querySelector('.popup_type_new-card')
     openModal(newItemPopup);
 });
 
+popupRemoveButton.forEach((item) => {
+    item.addEventListener('click', function () {
+        closePopup([...popupElement]); // Преобразование NodeList в массив
+    });
+});
 
-imageItem.addEventListener('click',function () {
-    const imageItemPopup = document.querySelector('.popup_type_image')
-    openModal(imageItemPopup)
-}) 
+// @todo: Вывести карточки на страницу
 
-colseIcon.addEventListener('click', (event)=>{
-    console.log(event.target.classList);
-})
+function renderCard(cardElement) {
+    cardsContainer.prepend(cardElement);
+}
+
+// Вывести первоначальные карточки на страницу
+
+initialCards.forEach((item) => {
+    const cardElement = createCard(item, deleteCard, likeCard, openImageCard);
+    renderCard(cardElement);
+});
 
 
-// функция like 
 
-function likeCard (evt){
-    evt.target.classList.contains('card__like-button');
-  
-    if (evt.target.classList.contains('card__like-button')) {
-      // Добавляет или удаляет класс в зависимости от его наличия
-      evt.target.classList.toggle('card__like-button_is-active');
-    }
-  }
-
-  // обработчик
-  cardsContainer.addEventListener('click', function(element){
-    likeCard(element)
-  })
