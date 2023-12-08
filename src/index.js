@@ -17,7 +17,7 @@ const editPopupButton = document.querySelector('.profile__edit-button');
 const newItemPopupButton = document.querySelector('.profile__add-button');
 const nameInput = document.querySelector('.popup__input_type_name');
 const jobInput = document.querySelector('.popup__input_type_description');
-const popupElement = document.querySelectorAll('.popup')
+const popupElements = document.querySelectorAll('.popup')
 const nameField = document.querySelector('.profile__title');
 const jobField = document.querySelector('.profile__description');
 const newItemPopup = document.querySelector('.popup_type_new-card');
@@ -82,7 +82,7 @@ newItemPopupButton.addEventListener('click', function () {
     openModal(newItemPopup);
 });
 
-popupElement.forEach((popup) => {
+popupElements.forEach((popup) => {
     popup.addEventListener('click', handleOverlayClose);
 });
 
