@@ -2,7 +2,10 @@
 export function likeCard(likeButton) {
     likeButton.classList.toggle('card__like-button_is-active');
 }
-
+// удаление карточки
+export function deleteCard(cardElement) {
+    cardElement.remove();
+}
 // Функция создания карточки
 
 export function createCard(cardValue, deleteCard, likeCard, openImageCard) {
@@ -28,24 +31,17 @@ export function createCard(cardValue, deleteCard, likeCard, openImageCard) {
 
     // слушатель на кнопку лайка
     likeButtons.forEach(likeButton => {
-        likeButton.addEventListener('click',()=>{
+        likeButton.addEventListener('click', () => {
             likeCard(likeButton);
         });
     });
 
     // открытие фото 
-    imageItem.addEventListener('click', ()=>{
+    imageItem.addEventListener('click', () => {
         openImageCard(cardValue)
     })
 
     return templateContent;
 
 
-}
-
-
-// @todo: Функция удаления карточки
-
-export function deleteCard(cardElement) {
-    cardElement.remove();
 }

@@ -1,14 +1,14 @@
 // modal.js
 
 export function openModal(popupElement) {
-    popupElement.classList.add('popup_is-opened');
+    popupElement.classList.add('popup_is-opened', 'popup_is-animated');
 }
 
 export function closePopup(popupElement) {
     // Убираем класс, отвечающий за открытие попапа
-    popupElement.forEach((item) => {
-        item.classList.remove('popup_is-opened');
-    })
+
+    popupElement.classList.remove('popup_is-opened');
+
     document.removeEventListener('keydown', handleEscPress);
 }
 
@@ -18,11 +18,11 @@ export function handleEscPress(evt) {
         closePopup();
     }
 }
-function handleOverlayClose(evt) { 
-    if (evt.target === evt.currentTarget) { 
-      closeModal(evt.currentTarget); 
-    } 
-  }
+export function handleOverlayClose(evt) {
+    if (evt.target === evt.currentTarget || evt.target.classList.contains('popup__close')) {
+        closePopup(evt.currentTarget);
+    }
+}
 export function openImageCard(data) {
     const imageItemPopup = document.querySelector('.popup_type_image');
     const imagePopupElement = imageItemPopup.querySelector('.popup__image');
@@ -32,16 +32,3 @@ export function openImageCard(data) {
     openModal(imageItemPopup)
 }
 
-// Обработчик «отправки» формы
-export function handleNewCardSubmit(evt) {
-    evt.preventDefault();
-    const newCardNameInput = document.querySelector('.popup__input_type_card-name');
-    const newCardLinkInput = document.querySelector('.popup__input_type_url');
-    const newCard = {
-        name: newCardNameInput.value,
-        link: newCardLinkInput.value
-    };
-    const cardElement = createCard(newCard);
-    renderCard(cardElement);
-    closePopup(newItemPopup);
-}
