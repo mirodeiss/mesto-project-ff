@@ -21,7 +21,7 @@ export function createCard(cardValue, deleteCard, likeCard, openImageCard) {
     templateContent.querySelector('.card__title').textContent = cardValue.name;
 
     const deleteButton = templateContent.querySelector('.card__delete-button');
-    const likeButtons = templateContent.querySelectorAll('.card__like-button');
+    const likeButton = templateContent.querySelector('.card__like-button');
     const imageItem = templateContent.querySelector('.card__image')
 
     //  слушатель на кнопку удаления
@@ -30,10 +30,9 @@ export function createCard(cardValue, deleteCard, likeCard, openImageCard) {
     })
 
     // слушатель на кнопку лайка
-    likeButtons.forEach(likeButton => {
-        likeButton.addEventListener('click', () => {
-            likeCard(likeButton);
-        });
+    likeButton.addEventListener('click', (event) => {
+        const clickedLikeButton = event.currentTarget;
+        likeCard(clickedLikeButton);
     });
 
     // открытие фото 
