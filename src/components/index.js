@@ -1,12 +1,12 @@
-import './index.css';
+import '../index.css';
 
-import { initialCards } from './components/cards';
-import { deleteCard } from './components/card';
-import { createCard } from './components/card';
-import { openModal } from './components/modal';
-import { closePopup } from './components/modal';
-import { handleOverlayClose } from './components/modal';
-import { likeCard } from './components/card';
+import { initialCards } from './cards';
+import { deleteCard } from './card';
+import { createCard } from './card';
+import { openModal } from './modal';
+import { closePopup } from './modal';
+import { handleOverlayClose } from './modal';
+import { likeCard } from './card';
 
 // @DOM узлы
 
