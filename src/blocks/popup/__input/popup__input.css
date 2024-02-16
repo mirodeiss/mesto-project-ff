@@ -15,16 +15,12 @@
   margin-bottom: 0;
 }
 
-
-.popup__input:valid{
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-}
-.popup__input:invalid{
-  border-bottom: 1px solid rgba(255, 0, 0, 1);
-}
 @media screen and (max-width: 568px) {
   .popup__title {
     font-size: 12px;
     line-height: 15px;
   }
+}
+.popup__input_type_error:invalid{
+  border-bottom: 1px solid rgba(255, 0, 0, 1);
 }

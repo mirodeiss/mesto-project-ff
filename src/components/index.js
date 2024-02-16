@@ -1,12 +1,20 @@
 import '../index.css';
 
-import { initialCards } from './cards';
+
 import { deleteCard } from './card';
 import { createCard } from './card';
 import { openModal } from './modal';
 import { closePopup } from './modal';
 import { handleOverlayClose } from './modal';
 import { likeCard } from './card';
+
+import { enableValidation } from './validation';
+import { clearValidation } from './validation';
+
+import { clearInputValue } from './modal';
+
+import * as api from './api.js'
+
 
 // @DOM узлы
 
@@ -28,24 +36,37 @@ const imagePopup = document.querySelector('.popup_type_image');
 const imagePopupPhoto = imagePopup.querySelector('.popup__image');
 const imageDescription = imagePopup.querySelector('.popup__caption')
 
+const configForm = {
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_disabled',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__error_visible'
+}
 
-
-// функция создания новой карточки 
-function handleNewCardSubmit(evt) {
+// функция создания новой карточки
+async function handleNewCardSubmit(evt) {
     evt.preventDefault();
 
-    const newCard = {
-        name: newCardNameInput.value,
-        link: newCardLinkInput.value
-    }
-    const cardElement = createCard(newCard, deleteCard, likeCard, openImageCard);
-    renderCard(cardElement);
-    closePopup(newItemPopup);
+    try {
+        const dataBody = {
+            name: newCardNameInput.value,
+            link: newCardLinkInput.value
+        };
+        const newCard = await api.addCard(dataBody);
+        const cardElement = createCard(newCard, deleteCard, likeCard, openImageCard);
+        renderCard(cardElement);
+        closePopup(newItemPopup);
 
-    evt.target.reset();
+        evt.target.reset();
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 newCardForm.addEventListener('submit', handleNewCardSubmit);
+
 
 // функция редактирование профиля
 function handleEditProfileFormSubmit(evt) {
@@ -73,17 +94,26 @@ function openImageCard(data) {
 }
 
 
-// попап редактирования
+// слушатель попап редактирования
 editPopupButton.addEventListener('click', function () {
+    
     openModal(editPopup);
 
     // значения инпутов при открытие попапа
     nameInput.value = nameField.textContent;
     jobInput.value = jobField.textContent;
+
+    // очистка ошибок
+    clearValidation(editProfileForm, configForm); 
 });
 
-//   попап добавления
+//  слушатель попап добавления
 newItemPopupButton.addEventListener('click', function () {
+    // очистка значений если пользователь вышел и не сохранил
+    clearInputValue(newCardNameInput, newCardLinkInput)
+    // очистка ошибок
+    clearValidation(newCardForm, configForm);
+
     openModal(newItemPopup);
 });
 
@@ -98,10 +128,19 @@ function renderCard(cardElement) {
 
 // Вывести первоначальные карточки на страницу
 
-initialCards.forEach((item) => {
-    const cardElement = createCard(item, deleteCard, likeCard, openImageCard);
-    renderCard(cardElement);
-});
+async function renderinitialCards(){
+    try {
+        const dataCards = await  api.getAllCards();
+        dataCards.forEach((item) => {
+            const cardElement = createCard(item, deleteCard, likeCard, openImageCard);
+            renderCard(cardElement);
+        }); 
+    } catch (error) {
+        console.log(error)
+    }
+    
+}
+renderinitialCards();
 
-
-
+// validation
+enableValidation(configForm); 

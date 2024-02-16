@@ -19,12 +19,15 @@
   cursor: pointer;
 }
 
-.popup__button-inactive{
+.popup__button_disabled{
   border: 1px solid rgba(0, 0, 0, .2);
   color: rgba(0, 0, 0, .2);
   background-color: inherit;
 }
-
+.popup__button_disabled:hover{
+  background: inherit;
+  cursor:not-allowed;
+}
 @media screen and (max-width: 568px) {
   .popup__button {
     font-size: 14px;

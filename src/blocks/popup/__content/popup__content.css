@@ -8,7 +8,9 @@
   box-sizing: border-box;
   padding: 34px 36px;
 }
-
+.popup__content:last-of-type {
+  min-height: 230px;
+}
 @media screen and (max-width: 568px) {
   .popup__content {
     width: 100%;
