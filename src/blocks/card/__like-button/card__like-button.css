@@ -14,7 +14,16 @@
   -o-transition: 0.3s;
   transition: 0.3s;
 }
-
+.card__like-container {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.card__like-counter {
+  margin: 0;
+  align-self: center;
+  font-size: 13px;
+}
 .card__like-button:hover {
   opacity: 0.6;
 }

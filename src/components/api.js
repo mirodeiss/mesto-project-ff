@@ -1,8 +1,10 @@
 // данные для переиспользования - адрес сервера / токен
 const config = {
     url: `https://nomoreparties.co/v1/cohort-magistr-2`,
-    headers: {'Content-type': 'application/json',
-    'Authorization': '485cc8b5-4513-41c7-a9ed-1bc0b758c6d8'},
+    headers: {
+        'Content-type': 'application/json',
+        'Authorization': '485cc8b5-4513-41c7-a9ed-1bc0b758c6d8'
+    },
 
 }
 
@@ -30,13 +32,36 @@ export function getAllCards() {
     return request('cards');
 }
 
-// добавление карточек на сайт
+// добавление карточки на сайт
 export function addCard(dataBody) {
     return request('cards', {
         method: 'POST',
         body: JSON.stringify(dataBody),
     });
 }
+
+// информация о пользователе 
+export function getUserInfo() {
+    return request('users/me')
+}
+
+
+// // редактирование аватара
+export function edditProfile(dataBody) {
+    return request('users/me', {
+        method: 'PATCH',
+        body: JSON.stringify(dataBody),
+    });
+}
+
+
+// удваление карточки
+export function deleteCard(cardId) {
+    return request(`cards/${cardId}`, {
+        method: 'DELETE',
+    });
+}
+
 
 
 

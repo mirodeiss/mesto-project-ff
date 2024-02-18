@@ -27,7 +27,9 @@ const popupElements = document.querySelectorAll('.popup')
 const nameField = document.querySelector('.profile__title');
 const jobField = document.querySelector('.profile__description');
 const newItemPopup = document.querySelector('.popup_type_new-card');
-const editPopup = document.querySelector('.popup_type_edit')
+const editPopup = document.querySelector('.popup_type_edit');
+const edditAvatarButton = document.querySelector('.profile__image')
+const avatarPopup = document.querySelector('.popup_type_avatar')
 const editProfileForm = document.forms["edit-profile"];
 const newCardForm = document.forms["new-place"];
 const newCardNameInput = document.querySelector('.popup__input_type_card-name');
@@ -44,6 +46,27 @@ const configForm = {
     inputErrorClass: 'popup__input_type_error',
     errorClass: 'popup__error_visible'
 }
+
+
+async function loadUserInfo() {
+    try {
+      const userInfo = await api.getUserInfo();
+      
+      // свойства name, about и avatar в соответствующих элементах шапки страницы
+      nameField.textContent = userInfo.name;
+      jobField.textContent = userInfo.about;
+  
+      const avatarElement = document.querySelector('.profile__image');
+      avatarElement.src = userInfo.avatar;
+    } catch (error) {
+      console.log('Ошибка при загрузке информации о пользователе:', error);
+    }
+  }
+  
+  // Вызываем функцию загрузки информации о пользователе при загрузке страницы
+  loadUserInfo();
+  
+
 
 // функция создания новой карточки
 async function handleNewCardSubmit(evt) {
@@ -69,20 +92,32 @@ newCardForm.addEventListener('submit', handleNewCardSubmit);
 
 
 // функция редактирование профиля
-function handleEditProfileFormSubmit(evt) {
+async function handleEditProfileFormSubmit(evt) {
     evt.preventDefault();
-
-    const jobInputValue = jobInput.value;
-    const nameInputValue = nameInput.value;
-
-    nameField.textContent = nameInputValue;
-    jobField.textContent = jobInputValue;
-
-    // close popup
-    closePopup(editPopup)
-}
-
-editProfileForm.addEventListener('submit', handleEditProfileFormSubmit);
+  
+    try {
+      const jobInputValue = jobInput.value;
+      const nameInputValue = nameInput.value;
+  
+      // Отправляем запрос на редактирование профиля
+      await api.edditProfile({
+        name: nameInputValue,
+        about: jobInputValue
+      });
+  
+      // Обновляем отображаемые данные на странице
+      nameField.textContent = nameInputValue;
+      jobField.textContent = jobInputValue;
+  
+      // Закрываем popup
+      closePopup(editPopup);
+    } catch (error) {
+      console.error('Ошибка при редактировании профиля:', error);
+    }
+  }
+  
+  editProfileForm.addEventListener('submit', handleEditProfileFormSubmit);
+  
 
 // функция открытия картинки 
 function openImageCard(data) {
@@ -120,6 +155,13 @@ newItemPopupButton.addEventListener('click', function () {
 popupElements.forEach((popup) => {
     popup.addEventListener('click', handleOverlayClose);
 });
+
+//слушатель редактирования аватара
+edditAvatarButton.addEventListener('click', ()=>{
+    openModal(avatarPopup)
+})
+
+
 
 // @todo: Вывести карточки на страницу
 function renderCard(cardElement) {

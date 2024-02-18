@@ -129,38 +129,45 @@
       </div>
     </div>
   </div>
-  <div class="popup popup_type_delete-card">
-    <div class="popup__content">
+  <div class="popup popup_type_delete" data-id="">
+    <div class="popup__content popup_type_delete__content">
       <button type="button" class="popup__close"></button>
       <h3 class="popup__title">Вы уверены?</h3>
-      <form class="popup__form popup__form_delete" name="delete-card" novalidate>
-        <button type="submit" class="button popup__button">Да</button>
+      <button type="submit" class="button popup__button popup_type_delete__button" name="button">
+        Да
+      </button>
+    </div>
+  </div>
+  <div class="popup popup_type_edit_avatar">
+    <div class="popup__content popup_type_edit_avatar__content">
+      <button type="button" class="popup__close"></button>
+      <h3 class="popup__title">Обновить аватар</h3>
+      <form class="popup__form" name="edit-profile-img">
+        <label class="popup__label popup__label_type_url">
+          <input type="url" name="link" id="url-input" class="popup__input popup__input_type_url"
+            placeholder="Ссылка на аватар" required />
+          <span class="popup__input_type_url-error url-input-error"></span>
+        </label>
+        <button type="submit" class="button popup__button popup_type_edit_avatar__button" name="button">
+          Сохранить
+        </button>
       </form>
     </div>
   </div>
-
   <template id="card-template">
-
     <li class="places__item card">
-
       <img class="card__image" src="" alt="" />
-
       <button type="button" class="card__delete-button"></button>
-
       <div class="card__description">
-
         <h2 class="card__title">
-
         </h2>
-
-        <button type="button" class="card__like-button"></button>
-
+        <div class="card__like-container">
+          <button type="button" class="card__like-button"></button>
+          <p class="card__like-counter"></p>
+        </div>
       </div>
-
     </li>
-
   </template>
-
 </body>
 
 </html>
