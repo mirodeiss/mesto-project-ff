@@ -1,3 +1,4 @@
+import * as api from './api.js'
 // функция like 
 export function likeCard(likeButton) {
     likeButton.classList.toggle('card__like-button_is-active');
@@ -25,10 +26,15 @@ export function createCard(cardValue, deleteCard, likeCard, openImageCard) {
     const imageItem = templateContent.querySelector('.card__image')
 
     //  слушатель на кнопку удаления
-    deleteButton.addEventListener('click', () => {
-        deleteCard(templateContent);
-    })
-
+    deleteButton.addEventListener('click', async () => {
+        try {
+          await api.deleteCard(cardValue.id);
+          deleteCard(templateContent);
+        } catch (error) {
+          console.log(error);
+        }
+      });
+      
     // слушатель на кнопку лайка
     likeButton.addEventListener('click', (event) => {
         const clickedLikeButton = event.currentTarget;
