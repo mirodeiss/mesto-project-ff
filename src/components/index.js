@@ -17,27 +17,37 @@ import * as api from './api.js'
 
 
 // @DOM узлы
-
 const cardsContainer = document.querySelector('.places__list');
+// buttons
 const editPopupButton = document.querySelector('.profile__edit-button');
 const newItemPopupButton = document.querySelector('.profile__add-button');
+const edditAvatarButton = document.querySelector('.profile__image');
+const deleteCardButton = document.querySelector('.popup_type_delete__button');
+const saveButtonPopup = document.querySelector('.popup__button')
+// input
 const nameInput = document.querySelector('.popup__input_type_name');
 const jobInput = document.querySelector('.popup__input_type_description');
-const popupElements = document.querySelectorAll('.popup')
-const nameField = document.querySelector('.profile__title');
-const jobField = document.querySelector('.profile__description');
+// popup
+const popupElements = document.querySelectorAll('.popup');
 const newItemPopup = document.querySelector('.popup_type_new-card');
 const editPopup = document.querySelector('.popup_type_edit');
-const edditAvatarButton = document.querySelector('.profile__image')
-const avatarPopup = document.querySelector('.popup_type_avatar')
-const editProfileForm = document.forms["edit-profile"];
-const newCardForm = document.forms["new-place"];
-const newCardNameInput = document.querySelector('.popup__input_type_card-name');
-const newCardLinkInput = document.querySelector('.popup__input_type_url');
+const avatarPopup = document.querySelector('.popup_type_avatar');
+const deletePopup = document.querySelector('.popup_type_delete');
 const imagePopup = document.querySelector('.popup_type_image');
 const imagePopupPhoto = imagePopup.querySelector('.popup__image');
-const imageDescription = imagePopup.querySelector('.popup__caption')
+const showErrorPopup = document.querySelector('.popup_type_show_warning')
+// profile info 
+const nameField = document.querySelector('.profile__title');
+const jobField = document.querySelector('.profile__description');
+const newCardNameInput = document.querySelector('.popup__input_type_card-name');
+const newCardLinkInput = document.querySelector('.popup__input_type_url');
+// form
+const editProfileForm = document.forms["edit-profile"];
+const newCardForm = document.forms["new-place"];
+const imageDescription = imagePopup.querySelector('.popup__caption');
 
+
+// config settings 
 const configForm = {
     formSelector: '.popup__form',
     inputSelector: '.popup__input',
@@ -47,7 +57,12 @@ const configForm = {
     errorClass: 'popup__error_visible'
 }
 
+// variable selected for delete card 
+let selectedCard = null;
 
+
+
+// фуцнкция получение данных пользователя
 async function loadUserInfo() {
     try {
       const userInfo = await api.getUserInfo();
@@ -71,14 +86,14 @@ async function loadUserInfo() {
 // функция создания новой карточки
 async function handleNewCardSubmit(evt) {
     evt.preventDefault();
-
+    saveButtonPopup.textContent = 'Сохранение...';
     try {
         const dataBody = {
             name: newCardNameInput.value,
             link: newCardLinkInput.value
         };
         const newCard = await api.addCard(dataBody);
-        const cardElement = createCard(newCard, deleteCard, likeCard, openImageCard);
+        const cardElement = createCard(newCard, cardClickDeleteHandler, likeCard, openImageCard);
         renderCard(cardElement);
         closePopup(newItemPopup);
 
@@ -94,7 +109,7 @@ newCardForm.addEventListener('submit', handleNewCardSubmit);
 // функция редактирование профиля
 async function handleEditProfileFormSubmit(evt) {
     evt.preventDefault();
-  
+    saveButtonPopup.textContent = 'Сохранение...';
     try {
       const jobInputValue = jobInput.value;
       const nameInputValue = nameInput.value;
@@ -168,13 +183,34 @@ function renderCard(cardElement) {
     cardsContainer.prepend(cardElement);
 }
 
+
+const cardClickDeleteHandler = cardData => {
+    selectedCard = cardData;
+    openModal(deletePopup)
+}
+
+
+const buttonDeleteClickHandler = async () => {
+   try {
+    await api.deleteCard(selectedCard.id);
+   deleteCard(selectedCard.node);
+   closePopup(deletePopup)
+   } catch (error) {
+    closePopup(deletePopup)
+    openModal(showErrorPopup)
+   }
+}
+
+deleteCardButton.addEventListener('click', buttonDeleteClickHandler)
+
+
 // Вывести первоначальные карточки на страницу
 
 async function renderinitialCards(){
     try {
         const dataCards = await  api.getAllCards();
         dataCards.forEach((item) => {
-            const cardElement = createCard(item, deleteCard, likeCard, openImageCard);
+            const cardElement = createCard(item, cardClickDeleteHandler, likeCard, openImageCard);
             renderCard(cardElement);
         }); 
     } catch (error) {

@@ -133,7 +133,7 @@
     <div class="popup__content popup_type_delete__content">
       <button type="button" class="popup__close"></button>
       <h3 class="popup__title">Вы уверены?</h3>
-      <button type="submit" class="button popup__button popup_type_delete__button" name="button">
+      <button class="button popup__button popup_type_delete__button" name="button">
         Да
       </button>
     </div>
@@ -152,6 +152,12 @@
           Сохранить
         </button>
       </form>
+    </div>
+  </div>
+  <div class="popup popup_type_show_warning" data-id="">
+    <div class="popup__content popup_type_show_warning_message">
+      <button type="button" class="popup__close"></button>
+      <h3 class="popup__title popup__title_warning">Нельзя удалить карточку созданную не вами</h3>
     </div>
   </div>
   <template id="card-template">
