@@ -35,8 +35,8 @@
   padding: 16px 22px 17px 20px;
   display: flex;
   align-items: center;
-  background-color: grey;
-  color: white;
+  background-color: white;
+  color: black;
 }
 .popup__title_warning{
   font-weight: 600;
