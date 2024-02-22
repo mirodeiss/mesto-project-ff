@@ -65,13 +65,16 @@ let selectedCard = null;
 let userId = null;
 
 
+
+
+
 // замена аватара профиля
 
 async function handleFormAvatarSubmit(evt) {
     evt.preventDefault();
     try {
       changeAvatarButton.textContent = 'Сохранение...';
-      const newAvatar = await api.edditProfile(newAvatarInput.value);
+      const newAvatar = await api.edditAvatar(newAvatarInput.value);
       profileAvatar.style.backgroundImage = `url(${newAvatar.avatar})`;
       closePopup(avatarPopup);
     } catch (error) {
@@ -114,10 +117,12 @@ async function handleEditProfileFormSubmit(evt) {
         const jobInputValue = jobInput.value;
         const nameInputValue = nameInput.value;
 
+
         // Отправляем запрос на редактирование профиля
         await api.edditProfile({
             name: nameInputValue,
-            about: jobInputValue
+            about: jobInputValue,
+
         });
 
         // Обновляем отображаемые данные на странице
