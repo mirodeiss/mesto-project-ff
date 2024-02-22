@@ -47,15 +47,21 @@ export function getUserInfo() {
 
 
 // // редактирование аватара
-export function edditProfile(dataBody) {
-    return request('users/me', {
+export function edditProfile(avatar) {
+    return request('users/me/avatar', {
         method: 'PATCH',
-        body: JSON.stringify(dataBody),
+        body: JSON.stringify({avatar: avatar}),
     });
 }
 
 
-// удваление карточки
+// // лайк
+export function changeLikeStatus(cardId, isLike) {
+    return request(`cards/${cardId}/likes`, {
+        method: isLike ? 'DELETE' : 'PUT' ,
+    });
+}
+// удаление карточки
 export function deleteCard(cardId) {
     return request(`cards/${cardId}`, {
         method: 'DELETE',
