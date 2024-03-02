@@ -1,16 +1,19 @@
-
-// функция like 
-export function updateLikeStatus(cardElement,userId, likes) {
-    const isLiked = likes?.some(user => user._id === userId)
-    const likeButton = cardElement.querySelector('.card__like-button');
-    const likeCounterText = cardElement.querySelector('.card__like-counter');
+export function toggleActiveLikeClass(likeButton, isLiked){
     if(isLiked){
         likeButton.classList.add('card__like-button_is-active');
     }else{
         likeButton.classList.remove('card__like-button_is-active');
     }
+}
+
+// функция like 
+export function updateLikeStatus(cardElement,likes, isLiked) {
+    const likeButton = cardElement.querySelector('.card__like-button');
+    const likeCounterText = cardElement.querySelector('.card__like-counter');
+    toggleActiveLikeClass(likeButton, isLiked)
     likeCounterText.textContent = likes.length;
 }
+
 // удаление карточки
 export function deleteCard(cardElement) {
     cardElement.remove();
@@ -20,7 +23,7 @@ export function deleteCard(cardElement) {
 export function createCard(cardValue, cardClickDeleteHandler, cardLikekHandler, openImageCard, userId) {
 
     const isLiked = cardValue.likes?.some(user => user._id === userId)
-
+  
 
     // Темплейт карточки
     const cardTemplate = document.querySelector('#card-template');
@@ -39,7 +42,7 @@ export function createCard(cardValue, cardClickDeleteHandler, cardLikekHandler, 
     const imageItem = templateContent.querySelector('.card__image')
 
     // like 
-      updateLikeStatus(templateContent, userId, cardValue.likes)
+    updateLikeStatus(templateContent,cardValue.likes, isLiked)
 
     if(userId !== cardValue.owner._id){
        deleteButton.remove()
@@ -49,10 +52,11 @@ export function createCard(cardValue, cardClickDeleteHandler, cardLikekHandler, 
         cardClickDeleteHandler({id: cardValue._id, node: templateContent})
       });
     }
-      
+    
     // слушатель на кнопку лайка
     likeButton.addEventListener('click', () => {
-        cardLikekHandler({id:cardValue._id, likes: cardValue.likes, node: templateContent})
+        const isLiked = likeButton.classList.contains('card__like-button_is-active')
+        cardLikekHandler({id:cardValue._id, isLiked, node: templateContent})
     });
 
     // открытие фото 
