@@ -1,6 +1,7 @@
+// style css
 import '../index.css';
 
-
+// card and modal
 import { deleteCard } from './card';
 import { createCard } from './card';
 import { openModal } from './modal';
@@ -8,11 +9,12 @@ import { closePopup } from './modal';
 import { handleOverlayClose } from './modal';
 import { updateLikeStatus } from './card';
 
+// validation 
 import { enableValidation } from './validation';
 import { clearValidation } from './validation';
-
 import { clearInputValue } from './modal';
 
+// api 
 import * as api from './api.js'
 
 
@@ -63,9 +65,6 @@ const configForm = {
 // переменная для выбранной карточки
 let selectedCard = null;
 let userId = null;
-
-
-
 
 
 // замена аватара профиля
@@ -210,11 +209,10 @@ deleteCardButton.addEventListener('click', buttonDeleteClickHandler)
 
 
 // like api 
-const buttonLikeClickHandler = async ({ id: cardId, likes, node }) => {
+const buttonLikeClickHandler = async ({ id: cardId, isLiked, node }) => {
     try {
-        const isLiked = likes?.some(user => user._id === userId)
         const newCard = await api.changeLikeStatus(cardId, isLiked)
-        updateLikeStatus(node, userId, newCard.likes);
+        updateLikeStatus(node, newCard.likes, !isLiked);
     } catch (error) {
         console.log(error);
     }
@@ -233,7 +231,7 @@ async function loadUserInfo() {
         jobField.textContent = userInfo.about;
 
         const avatarElement = document.querySelector('.profile__image');
-        avatarElement.src = userInfo.avatar;
+        avatarElement.style.backgroundImage = `url(${userInfo.avatar})`;
     } catch (error) {
         console.log('Ошибка при загрузке информации о пользователе:', error);
     }
