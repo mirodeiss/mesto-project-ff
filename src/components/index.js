@@ -2,31 +2,24 @@
 import '../index.css';
 
 // card and modal
-import { deleteCard } from './card';
-import { createCard } from './card';
-import { openModal } from './modal';
-import { closePopup } from './modal';
-import { handleOverlayClose } from './modal';
-import { updateLikeStatus } from './card';
+import { deleteCard , createCard, updateLikeStatus} from './card';
+import { openModal, closePopup, clearInputValue, handleOverlayClose } from './modal';
 
 // validation 
-import { enableValidation } from './validation';
-import { clearValidation } from './validation';
-import { clearInputValue } from './modal';
+import { enableValidation, clearValidation } from './validation';
 
 // api 
 import * as api from './api.js'
 
-
 // @DOM 
 const cardsContainer = document.querySelector('.places__list');
 // buttons
-const editPopupButton = document.querySelector('.profile__edit-button');
-const newItemPopupButton = document.querySelector('.profile__add-button');
-const changeAvatarButton = document.querySelector('.popup__button_avatar');
+const buttonPopupTypeEdit = document.querySelector('.profile__edit-button');
+const buttonPopupNewItem = document.querySelector('.profile__add-button');
+const buttonChangeAvatar = document.querySelector('.popup__button_avatar');
 
-const deleteCardButton = document.querySelector('.popup_type_delete__button');
-const saveButtonPopup = document.querySelector('.popup__button');
+const buttonCardDelete = document.querySelector('.popup_type_delete__button');
+const buttonSavePopup = document.querySelector('.popup__button');
 // input
 const nameInput = document.querySelector('.popup__input_type_name');
 const jobInput = document.querySelector('.popup__input_type_description');
@@ -72,7 +65,7 @@ let userId = null;
 async function handleFormAvatarSubmit(evt) {
     evt.preventDefault();
     try {
-      changeAvatarButton.textContent = 'Сохранение...';
+      buttonChangeAvatar.textContent = 'Сохранение...';
       const newAvatar = await api.edditAvatar(newAvatarInput.value);
       profileAvatar.style.backgroundImage = `url(${newAvatar.avatar})`;
       closePopup(avatarPopup);
@@ -82,13 +75,13 @@ async function handleFormAvatarSubmit(evt) {
     } 
   }
   
-  changeAvatarButton.addEventListener('click', handleFormAvatarSubmit);
+  buttonChangeAvatar.addEventListener('click', handleFormAvatarSubmit);
   
 
 // функция создания новой карточки
 async function handleNewCardSubmit(evt) {
     evt.preventDefault();
-    saveButtonPopup.textContent = 'Сохранение...';
+    buttonSavePopup.textContent = 'Сохранение...';
     try {
         const dataBody = {
             name: newCardNameInput.value,
@@ -111,7 +104,7 @@ newCardForm.addEventListener('submit', handleNewCardSubmit);
 // функция редактирование профиля
 async function handleEditProfileFormSubmit(evt) {
     evt.preventDefault();
-    saveButtonPopup.textContent = 'Сохранение...';
+    buttonSavePopup.textContent = 'Сохранение...';
     try {
         const jobInputValue = jobInput.value;
         const nameInputValue = nameInput.value;
@@ -149,7 +142,7 @@ function openImageCard(data) {
 
 
 // слушатель попап редактирования
-editPopupButton.addEventListener('click', function () {
+buttonPopupTypeEdit.addEventListener('click', function () {
 
     openModal(editPopup);
 
@@ -162,7 +155,7 @@ editPopupButton.addEventListener('click', function () {
 });
 
 //  слушатель попап добавления
-newItemPopupButton.addEventListener('click', function () {
+buttonPopupNewItem.addEventListener('click', function () {
     // очистка значений если пользователь вышел и не сохранил
     clearInputValue(newCardNameInput, newCardLinkInput)
     // очистка ошибок
@@ -188,13 +181,13 @@ function renderCard(cardElement) {
 }
 
 
-const cardClickDeleteHandler = cardData => {
+const clickCardDeleteHandler = cardData => {
     selectedCard = cardData;
     openModal(deletePopup)
 }
 
 
-const buttonDeleteClickHandler = async () => {
+const deleteClickHandlerButton = async () => {
     try {
         await api.deleteCard(selectedCard.id);
         deleteCard(selectedCard.node);
@@ -205,11 +198,11 @@ const buttonDeleteClickHandler = async () => {
     }
 }
 
-deleteCardButton.addEventListener('click', buttonDeleteClickHandler)
+buttonCardDelete.addEventListener('click', deleteClickHandlerButton)
 
 
 // like api 
-const buttonLikeClickHandler = async ({ id: cardId, isLiked, node }) => {
+const likeCardClickHandler = async ({ id: cardId, isLiked, node }) => {
     try {
         const newCard = await api.changeLikeStatus(cardId, isLiked)
         updateLikeStatus(node, newCard.likes, !isLiked);
@@ -219,44 +212,31 @@ const buttonLikeClickHandler = async ({ id: cardId, isLiked, node }) => {
 }
 
 
-// функция получение данных пользователя
-async function loadUserInfo() {
+// Загрузка данных пользователя и карточек
+async function loadProfileDataAndRenderCards() {
     try {
-        const userInfo = await api.getUserInfo();
-        // класдем информацию о пользователе 
-        userId = userInfo._id
+        // Параллельно выполняем запросы за данными пользователя и карточками
+        const [userInfo, dataCards] = await Promise.all([api.getUserInfo(), api.getAllCards()]);
 
-        // свойства name, about и avatar в соответствующих элементах шапки страницы
+        // Обработка данных пользователя
+        userId = userInfo._id;
         nameField.textContent = userInfo.name;
         jobField.textContent = userInfo.about;
-
         const avatarElement = document.querySelector('.profile__image');
         avatarElement.style.backgroundImage = `url(${userInfo.avatar})`;
-    } catch (error) {
-        console.log('Ошибка при загрузке информации о пользователе:', error);
-    }
-}
 
-
-// Вывести первоначальные карточки на страницу
-async function renderinitialCards() {
-    try {
-        const dataCards = await api.getAllCards();
+        // Рендер карточек с использованием userId
         dataCards.forEach((item) => {
-            const cardElement = createCard(item, cardClickDeleteHandler, buttonLikeClickHandler, openImageCard, userId);
+            const cardElement = createCard(item, clickCardDeleteHandler, likeCardClickHandler, openImageCard, userId);
             renderCard(cardElement);
         });
     } catch (error) {
-        console.log(error)
+        console.log('Ошибка при загрузке данных:', error);
     }
-
 }
 
-
-// Вызываем функцию загрузки информации о пользователе при загрузке страницы
-loadUserInfo();
-// рендер каточек вызов функции
-renderinitialCards();
+// функцию загрузки данных пользователя и карточек при загрузке страницы
+loadProfileDataAndRenderCards();
 
 // validation
 enableValidation(configForm); 

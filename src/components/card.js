@@ -21,50 +21,49 @@ export function deleteCard(cardElement) {
 // Функция создания карточки
 
 export function createCard(cardValue, cardClickDeleteHandler, cardLikekHandler, openImageCard, userId) {
-
-    const isLiked = cardValue.likes?.some(user => user._id === userId)
-  
+    // Проверка наличия лайков и определение, лайкнул ли текущий пользователь
+    const isLiked = cardValue.likes?.some(user => user._id === userId);
 
     // Темплейт карточки
     const cardTemplate = document.querySelector('#card-template');
-    
 
-    // Клонируем содержимое этого темплейта
+    // Клон содержимого темплейта
     const templateContent = cardTemplate.content.cloneNode(true).querySelector('.places__item');
 
-    // Содержимое темплейта
-    templateContent.querySelector('.card__image').src = cardValue.link;
-    templateContent.querySelector('.card__image').alt = cardValue.name;
-    templateContent.querySelector('.card__title').textContent = cardValue.name;
-
+    // переменные для элементов
+    const cardImage = templateContent.querySelector('.card__image');
+    const cardTitle = templateContent.querySelector('.card__title');
     const deleteButton = templateContent.querySelector('.card__delete-button');
     const likeButton = templateContent.querySelector('.card__like-button');
-    const imageItem = templateContent.querySelector('.card__image')
+    const imageItem = templateContent.querySelector('.card__image');
+
+    // Заполняем атрибуты
+    cardImage.src = cardValue.link;
+    cardImage.alt = cardValue.name;
+    cardTitle.textContent = cardValue.name;
 
     // like 
-    updateLikeStatus(templateContent,cardValue.likes, isLiked)
+    updateLikeStatus(templateContent, cardValue.likes, isLiked);
 
-    if(userId !== cardValue.owner._id){
-       deleteButton.remove()
+    if (userId !== cardValue.owner._id) {
+        deleteButton.remove();
     } else {
-        //  слушатель на кнопку удаления
-    deleteButton.addEventListener('click', () => {
-        cardClickDeleteHandler({id: cardValue._id, node: templateContent})
-      });
+        // Слушатель на кнопку удаления
+        deleteButton.addEventListener('click', () => {
+            cardClickDeleteHandler({ id: cardValue._id, node: templateContent });
+        });
     }
-    
-    // слушатель на кнопку лайка
+
+    // Слушатель на кнопку лайка
     likeButton.addEventListener('click', () => {
-        const isLiked = likeButton.classList.contains('card__like-button_is-active')
-        cardLikekHandler({id:cardValue._id, isLiked, node: templateContent})
+        const isLiked = likeButton.classList.contains('card__like-button_is-active');
+        cardLikekHandler({ id: cardValue._id, isLiked, node: templateContent });
     });
 
-    // открытие фото 
+    // Открытие фото 
     imageItem.addEventListener('click', () => {
-        openImageCard(cardValue)
-    })
+        openImageCard(cardValue);
+    });
 
     return templateContent;
-
-
 }
