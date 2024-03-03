@@ -2,7 +2,7 @@
 import '../index.css';
 
 // card and modal
-import { deleteCard , createCard, updateLikeStatus} from './card';
+import { deleteCard, createCard, updateLikeStatus } from './card';
 import { openModal, closePopup, clearInputValue, handleOverlayClose } from './modal';
 
 // validation 
@@ -62,41 +62,49 @@ let userId = null;
 
 // замена аватара профиля
 
+// функция редактирования аватара профиля
 async function handleFormAvatarSubmit(evt) {
     evt.preventDefault();
     try {
-      buttonChangeAvatar.textContent = 'Сохранение...';
-      const newAvatar = await api.edditAvatar(newAvatarInput.value);
-      profileAvatar.style.backgroundImage = `url(${newAvatar.avatar})`;
-      closePopup(avatarPopup);
+        buttonChangeAvatar.textContent = 'Сохранение...';
+        const newAvatar = await api.edditAvatar(newAvatarInput.value);
+        profileAvatar.style.backgroundImage = `url(${newAvatar.avatar})`;
+        closePopup(avatarPopup);
     } catch (error) {
-      console.log(error);
-      
-    } 
-  }
-  
-  buttonChangeAvatar.addEventListener('click', handleFormAvatarSubmit);
-  
+        console.log(error);
+    } finally {
+        // Вернуть кнопку в исходное состояние, независимо от результата запроса
+        buttonChangeAvatar.textContent = 'Сохранить';
+    }
+}
+
+buttonChangeAvatar.addEventListener('click', handleFormAvatarSubmit);
+
 
 // функция создания новой карточки
 async function handleNewCardSubmit(evt) {
     evt.preventDefault();
-    buttonSavePopup.textContent = 'Сохранение...';
     try {
+        buttonSavePopup.textContent = 'Сохранение...';
         const dataBody = {
             name: newCardNameInput.value,
             link: newCardLinkInput.value
         };
         const newCard = await api.addCard(dataBody);
-        const cardElement = createCard(newCard, cardClickDeleteHandler, buttonLikeClickHandler, openImageCard, userId);
+        const cardElement = createCard(newCard, clickCardDeleteHandler, likeCardClickHandler, openImageCard, userId);
         renderCard(cardElement);
         closePopup(newItemPopup);
 
         evt.target.reset();
     } catch (error) {
         console.log(error);
+    } finally {
+        // Вернуть кнопку в исходное состояние, независимо от результата запроса
+        buttonSavePopup.textContent = 'Создать';
     }
 }
+
+newCardForm.addEventListener('submit', handleNewCardSubmit);
 
 newCardForm.addEventListener('submit', handleNewCardSubmit);
 
@@ -177,7 +185,14 @@ profileAvatar.addEventListener('click', () => {
 
 // @todo: Вывести карточки на страницу
 function renderCard(cardElement) {
-    cardsContainer.prepend(cardElement);
+    const firstCard = cardsContainer.querySelector('.places__item');
+    if (firstCard) {
+        // Если есть существующие карточки, вставляем перед первой
+        cardsContainer.insertBefore(cardElement, firstCard);
+    } else {
+        // Если нет существующих карточек, используем append (как было раньше)
+        cardsContainer.appendChild(cardElement);
+    }
 }
 
 
