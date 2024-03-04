@@ -188,6 +188,7 @@ profileAvatar.addEventListener('click', () => {
 
 
 
+
 // @todo: Вывести карточки на страницу
 function renderCard(cardElement, insertMethod) {
     if (insertMethod === 'prepend') {
