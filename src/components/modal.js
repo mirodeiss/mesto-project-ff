@@ -26,7 +26,4 @@ export function handleOverlayClose(evt) {
     }
 }
 
-// очистка значения
-export function clearInputValue(inputs){
-    inputs.value = ''
-}
+

@@ -3,7 +3,7 @@ import '../index.css';
 
 // card and modal
 import { deleteCard, createCard, updateLikeStatus } from './card';
-import { openModal, closePopup, clearInputValue, handleOverlayClose } from './modal';
+import { openModal, closePopup, handleOverlayClose } from './modal';
 
 // validation 
 import { enableValidation, clearValidation } from './validation';
@@ -55,6 +55,12 @@ const configForm = {
     errorClass: 'popup__error_visible'
 }
 
+// очистка полей 
+function clearInputValue(inputs){
+    inputs.value = ''
+} 
+
+
 // переменная для выбранной карточки
 let selectedCard = null;
 let userId = null;
@@ -92,7 +98,7 @@ async function handleNewCardSubmit(evt) {
         };
         const newCard = await api.addCard(dataBody);
         const cardElement = createCard(newCard, clickCardDeleteHandler, likeCardClickHandler, openImageCard, userId);
-        renderCard(cardElement);
+        renderCard(cardElement, 'prepend');
         closePopup(newItemPopup);
 
         evt.target.reset();
@@ -106,7 +112,6 @@ async function handleNewCardSubmit(evt) {
 
 newCardForm.addEventListener('submit', handleNewCardSubmit);
 
-newCardForm.addEventListener('submit', handleNewCardSubmit);
 
 
 // функция редактирование профиля
@@ -184,16 +189,14 @@ profileAvatar.addEventListener('click', () => {
 
 
 // @todo: Вывести карточки на страницу
-function renderCard(cardElement) {
-    const firstCard = cardsContainer.querySelector('.places__item');
-    if (firstCard) {
-        // Если есть существующие карточки, вставляем перед первой
-        cardsContainer.insertBefore(cardElement, firstCard);
+function renderCard(cardElement, insertMethod) {
+    if (insertMethod === 'prepend') {
+        cardsContainer.prepend(cardElement);
     } else {
-        // Если нет существующих карточек, используем append (как было раньше)
-        cardsContainer.appendChild(cardElement);
+        cardsContainer.append(cardElement);
     }
 }
+
 
 
 const clickCardDeleteHandler = cardData => {
@@ -239,11 +242,11 @@ async function loadProfileDataAndRenderCards() {
         jobField.textContent = userInfo.about;
         const avatarElement = document.querySelector('.profile__image');
         avatarElement.style.backgroundImage = `url(${userInfo.avatar})`;
-
-        // Рендер карточек с использованием userId
-        dataCards.forEach((item) => {
+   
+        // Рендер карточек 
+         dataCards.forEach((item) => {
             const cardElement = createCard(item, clickCardDeleteHandler, likeCardClickHandler, openImageCard, userId);
-            renderCard(cardElement);
+         renderCard(cardElement, 'append');
         });
     } catch (error) {
         console.log('Ошибка при загрузке данных:', error);
